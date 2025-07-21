@@ -62,9 +62,9 @@
         <div class="flex items-center justify-center">
           <div class="flex items-center gap-2">
             <a href="/">
-              <.icon name="hero-hand-raised-solid" class="" />
+              <.icon name="hero-hand-raised-solid" class="text-sky-600" />
             </a>
-            <a href="/home" class="text-lg font-semibold text-zinc-900">
+            <a href="/" class="text-lg font-semibold text-zinc-900">
               <%= if match?(%{admin: true}, @current_user) do %>
                 SignCraft (Admin)
               <% else %>
