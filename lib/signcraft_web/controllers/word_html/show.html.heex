@@ -1,0 +1,15 @@
+<.header>
+  Word #{@word.id}
+  <:actions>
+    <.link href={~p"/words/#{@word}/edit"}>
+      <.button>Edit</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Text">{@word.text}</:item>
+  <:item title="Type">{@word.word_type.name}</:item>
+</.list>
+
+<.back navigate={~p"/words"}>All Words</.back>

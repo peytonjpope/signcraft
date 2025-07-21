@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" class="[scrollbar-gutter:stable]">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content={get_csrf_token()} />
+    <.live_title default="SignCraft">
+      {assigns[:page_title]}
+    </.live_title>
+    <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
+    </script>
+  </head>
+  <body class="bg-white min-h-screen flex flex-col">
+    <div class="relative z-10 flex items-center justify-between px-4 sm:px-6 lg:px-8">
+ <%= if @current_user do %>    
+   <!-- User Badge on the left -->
+   <div class="flex items-center space-x-2">
+     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-zinc-100 text-zinc-800">
+       <%= @current_user.username %>
+     </span>
+   </div>
+ <% else %>
+   <!-- Empty div to maintain spacing when logged out -->
+   <div></div>
+ <% end %>
+ 
+ <!-- Navigation moved to the right -->
+ <ul class="flex items-center gap-4">
+   <%= if @current_user do %>
+     <li>
+       <.link
+         href={~p"/users/settings"}
+         class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+       >
+         My Account
+       </.link>
+     </li>
+   <% else %>
+     <li>
+       <.link
+         href={~p"/users/register"}
+         class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+       >
+         Create Account
+       </.link>
+     </li>
+     <li>
+       <.link
+         href={~p"/users/log_in"}
+         class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+       >
+         Log in
+       </.link>
+     </li>
+   <% end %>
+ </ul>
+</div>
+    
+    <header class="px-4 sm:px-6 lg:px-8">
+      <div class="border-b border-zinc-100 pt-2 pb-4 text-sm">
+        <div class="flex items-center justify-center">
+          <div class="flex items-center gap-2">
+            <a href="/">
+              <.icon name="hero-hand-raised-solid" class="" />
+            </a>
+            <a href="/home" class="text-lg font-semibold text-zinc-900">
+              <%= if match?(%{admin: true}, @current_user) do %>
+                SignCraft (Admin)
+              <% else %>
+                SignCraft
+              <% end %>
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+    {@inner_content}
+  </body>
+</html>

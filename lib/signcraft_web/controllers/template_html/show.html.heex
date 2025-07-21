@@ -1,0 +1,24 @@
+<.header>
+  Template #{@template.id}
+  <:actions>
+    <.link href={~p"/templates/#{@template}/edit"}>
+      <.button>Edit</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Name">{@template.name}</:item>
+  <:item title="Structure">
+    <%= @template.structure 
+    |> Enum.map(fn word_type_id -> 
+      case Enum.find(@word_types, &(&1.id == word_type_id)) do
+        nil -> "unknown"
+        word_type -> word_type.name
+      end
+    end)
+    |> Enum.join(" + ") %>
+  </:item>
+</.list>
+
+<.back navigate={~p"/templates"}>All Templates</.back>

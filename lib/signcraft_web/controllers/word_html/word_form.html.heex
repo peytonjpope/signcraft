@@ -1,0 +1,17 @@
+<.simple_form :let={f} for={@changeset} action={@action}>
+  <.error :if={@changeset.action}>
+    Oops, something went wrong! Please check the errors below.
+  </.error>
+  <.input field={f[:text]} type="text" label="Text" />
+ <.input 
+    field={f[:word_type_id]} 
+    type="select" 
+    label="Type" 
+    options={Enum.map(@word_types, &{&1.name, &1.id})}
+    prompt="Select word type"
+    required 
+  />  
+  <:actions>
+    <.button>Save Word</.button>
+  </:actions>
+</.simple_form>

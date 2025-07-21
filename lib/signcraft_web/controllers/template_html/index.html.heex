@@ -1,0 +1,27 @@
+<.header>
+  My Templates
+  <:actions>
+    <.link href={~p"/templates/new"}>
+      <.button>New Template</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table id="templates" rows={@templates} row_click={&JS.navigate(~p"/templates/#{&1}/edit")}>
+  <:col :let={template} label="Name"><%= template.name %></:col>
+  <:col :let={template} label="Structure">
+    <%= template.structure 
+    |> Enum.map(fn word_type_id -> 
+      case Enum.find(@word_types, &(&1.id == word_type_id)) do
+        nil -> "unknown"
+        word_type -> word_type.name
+      end
+    end)
+    |> Enum.join(" + ") %>
+  </:col>
+  <:action :let={template}>
+    <.link href={~p"/templates/#{template}"} method="delete" data-confirm="Are you sure?">
+      <.icon name="hero-x-mark" />
+    </.link>
+  </:action>
+</.table>

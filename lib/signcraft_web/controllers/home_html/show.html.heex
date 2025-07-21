@@ -1,0 +1,29 @@
+<div class="mx-auto max-w-2xl mt-12">
+  <.header class="text-center">
+    Welcome to SignCraft
+    <:subtitle>
+      Create random gloss sentences to practice your ASL
+    </:subtitle>
+  </.header>
+
+  <!-- Generated Sentence Display -->
+<div class="mt-14 text-center">
+  <div class="relative inline-block">
+    <div class="absolute inset-0 bg-gradient-to-r from-blue-300 to-blue-500 rounded-lg blur opacity-50"></div>
+    <div class="relative bg-white rounded-lg px-8 py-6 shadow-md border border-blue-100">
+      <p class="text-2xl font-semibold text-zinc-900">
+        <%= @sentence %>
+      </p>
+    </div>
+  </div>
+</div>
+   
+  <!-- Generate Button -->
+  <div class="mt-10 text-center">
+    <.link href={~p"/home"}>
+      <.button class="bg-sky-700 hover:bg-sky-600 text-white px-6 py-3 text-lg">
+        Generate Sentence
+      </.button>
+    </.link>
+  </div>
+</div>

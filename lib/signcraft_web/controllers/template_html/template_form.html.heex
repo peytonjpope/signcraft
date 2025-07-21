@@ -1,0 +1,156 @@
+<div class="template-builder max-w-2xl mx-auto">
+  <.simple_form :let={f} for={@changeset} action={@action}>
+    <.error :if={@changeset.action}>
+      Oops, something went wrong! Please check the errors below.
+    </.error>
+    
+    <.input field={f[:name]} type="text" label="Template Name" placeholder="ex. Simple Sentence" required />
+    
+    <div class="mt-6">
+      <label class="block text-sm font-semibold leading-6 text-zinc-800">
+        Template Structure
+      </label>
+      
+      <!-- Template Structure Display -->
+      <div class="structure-section mb-4">
+        <div 
+          id="structure-display" 
+          class="min-h-[80px] p-4 border border-zinc-300 rounded-md bg-white flex flex-wrap gap-2 items-center"
+        >
+          <span class="text-zinc-200 italic text-sm" id="empty-message">Click word types below to build your template</span>
+        </div>
+      </div>
+
+      <!-- Available Word Types -->
+      <div class="available-types">
+        <div class="flex flex-wrap gap-2">
+          <%= for word_type <- @word_types do %>
+            <button 
+              type="button" 
+              class="add-btn px-3 py-2 border border-zinc-300 bg-white text-zinc-900 rounded-md text-sm font-medium hover:bg-zinc-50"
+              data-id={word_type.id}
+              data-name={word_type.name}
+            >
+              <%= word_type.name %>
+            </button>
+          <% end %>
+        </div>
+      </div>
+      
+      <!-- Hidden field to store the structure array -->
+      <input type="hidden" name="template[structure]" id="template_structure" value="[]" />
+    </div>
+    
+    <:actions>
+      <.button>Save Template</.button>
+    </:actions>
+  </.simple_form>
+</div>
+
+<style>
+  .structure-item {
+    display: inline-flex;
+    align-items: center;
+    background: white;
+    border: 1px solid #d4d4d8;
+    color: #18181b;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  
+  .structure-item:hover {
+    background: #f4f4f5;
+  }
+
+  .structure-item::after {
+    content: '×';
+    margin-left: 8px;
+    font-size: 14px;
+    color: #71717a;
+  }
+  
+  .structure-item:hover::after {
+    color: #18181b;
+  }
+  
+  .add-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #f4f4f5;
+  }
+  
+  .structure-arrow {
+    color: #71717a;
+    font-size: 14px;
+    margin: 0 4px;
+  }
+</style>
+
+<script>
+  let structureArray = [];
+  let wordTypeNames = {};
+  
+  // Initialize word type names from the server
+  <%= for word_type <- @word_types do %>
+    wordTypeNames[<%= word_type.id %>] = '<%= word_type.name %>';
+  <% end %>
+  
+  // Set up event listeners when page loads
+  document.addEventListener('DOMContentLoaded', function() {
+    // Add click listeners to all add buttons
+    document.querySelectorAll('.add-btn').forEach(button => {
+      button.addEventListener('click', function() {
+        const id = parseInt(this.dataset.id);
+        const name = this.dataset.name;
+        addWordType(id, name);
+      });
+    });
+    
+    // Initialize display
+    updateDisplay();
+  });
+  
+  function addWordType(id, name) {
+    if (structureArray.length >= 10) {
+      return;
+    }
+    
+    structureArray.push(id);
+    updateDisplay();
+  }
+  
+  function removeWordType(index) {
+    structureArray.splice(index, 1);
+    updateDisplay();
+  }
+  
+  function updateDisplay() {
+    const display = document.getElementById('structure-display');
+    const hiddenField = document.getElementById('template_structure');
+    
+    // Update add button states
+    const addButtons = document.querySelectorAll('.add-btn');
+    addButtons.forEach(btn => {
+      btn.disabled = structureArray.length >= 10;
+    });
+    
+    if (structureArray.length === 0) {
+      // Show empty state
+      display.innerHTML = '<span class="text-zinc-500 italic text-sm" id="empty-message">Click word types below to build your template</span>';
+      hiddenField.value = '[]';
+    } else {
+      // Show structure
+      display.innerHTML = structureArray.map((id, index) => {
+        const name = wordTypeNames[id] || 'unknown';
+        const arrow = index < structureArray.length - 1 ? '<span class="structure-arrow">+</span>' : '';
+        return `<span class="structure-item" onclick="removeWordType(${index})" title="Click to remove">${name}</span>${arrow}`;
+      }).join('');
+      
+      // Update hidden field
+      hiddenField.value = JSON.stringify(structureArray);
+    }
+  }
+</script>

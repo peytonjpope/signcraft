@@ -1,0 +1,51 @@
+
+<main class="px-4 py-20 sm:px-6 lg:px-8">
+  <div class="mx-auto max-w-xl">
+    <.flash_group flash={@flash} />
+    {@inner_content}
+  </div>
+</main>
+
+<%= unless String.starts_with?(@conn.request_path, "/users") do %>
+  <footer class="fixed bottom-0 left-0 right-0 px-4 sm:px-6 lg:px-8 bg-white border-t border-zinc-100">
+    <div class="flex items-center justify-center py-3">
+      <div class="grid grid-cols-4 gap-3 max-w-lg w-full">
+
+        <.link href={~p"/words"} class="block p-3 text-center border border-zinc-200 rounded-lg hover:bg-zinc-50">
+          <%= if String.starts_with?(@conn.request_path, "/words") do %>
+            <.icon name="hero-light-bulb-solid" class="w-5 h-5 mx-auto mb-1 text-black"/>
+            <div class="text-xs font-medium text-black">Words</div>
+          <% else %>
+            <.icon name="hero-light-bulb-solid" class="w-5 h-5 mx-auto mb-1 text-zinc-600"/>
+            <div class="text-xs font-medium text-zinc-900">Words</div>
+          <% end %>
+        </.link>
+
+        <.link href={~p"/word_types"} class="block p-3 text-center border border-zinc-200 rounded-lg hover:bg-zinc-50">
+          <%= if String.starts_with?(@conn.request_path, "/word_types") do %>
+            <.icon name="hero-tag-solid" class="w-5 h-5 mx-auto mb-1 text-black"/>
+            <div class="text-xs font-medium text-black">Types</div>
+          <% else %>
+            <.icon name="hero-tag-solid" class="w-5 h-5 mx-auto mb-1 text-zinc-600"/>
+            <div class="text-xs font-medium text-zinc-900">Types</div>
+          <% end %>
+        </.link>
+        
+        <.link href={~p"/templates"} class="block p-3 text-center border border-zinc-200 rounded-lg hover:bg-zinc-50">
+          <%= if String.starts_with?(@conn.request_path, "/templates") do %>
+            <.icon name="hero-puzzle-piece-solid" class="w-5 h-5 mx-auto mb-1 text-black"/>
+            <div class="text-xs font-medium text-black">Templates</div>
+          <% else %>
+            <.icon name="hero-puzzle-piece-solid" class="w-5 h-5 mx-auto mb-1 text-zinc-600"/>
+            <div class="text-xs font-medium text-zinc-900">Templates</div>
+          <% end %>
+        </.link>
+  
+        <.link href={~p"/words/new"} class="block p-3 text-center bg-zinc-900 rounded-lg hover:bg-zinc-800">
+          <.icon name="hero-squares-plus-solid" class="w-5 h-5 mx-auto mb-1 text-white"/>
+          <div class="text-xs font-medium text-white">Add Word</div>
+        </.link>
+      </div>
+    </div>
+  </footer>
+<% end %>

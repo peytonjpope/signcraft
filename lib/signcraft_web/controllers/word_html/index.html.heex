@@ -1,0 +1,48 @@
+<.header>
+  My Words
+  <:actions>
+    <.link href={~p"/words/new"}>
+      <.button>Add Word</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<%= for word_type <- @word_types do %>
+  <% words_for_type = Enum.filter(@words, fn word -> word.word_type_id == word_type.id end) %>
+  <% type_title = "#{String.capitalize(word_type.name)}s" %>
+  <%= if length(words_for_type) > 0 do %>
+    <.table id="words" rows={words_for_type} row_click={&JS.navigate(~p"/words/#{&1}/edit")}>
+      <:col :let={word} label={type_title}>{word.text}</:col>
+      <:action :let={word}>
+        <.link href={~p"/words/#{word}"} method="delete" data-confirm="Are you sure?">
+          <.icon name="hero-x-mark" />
+        </.link>
+      </:action>
+    </.table>
+  <% else %>
+     <div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
+      <table class="w-[40rem] mt-11 sm:w-full">
+        <thead class="text-sm text-left leading-6 text-zinc-500">
+          <tr>
+            <th class="p-0 pb-4 pr-6 font-normal"><%= type_title %></th>
+          </tr>
+        </thead>
+        <tbody class="relative divide-y divide-zinc-100 border-t border-zinc-200 text-sm leading-6 text-zinc-700">
+          <tr class="group">
+            <td class="relative p-0">
+              <div class="block py-4 pr-6">
+                <span class="absolute -inset-y-px right-0 -left-4 sm:rounded-l-xl"></span>
+                <span class="relative italic text-zinc-500">
+                  None 
+                </span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  <%= end %>
+<%= end %>
+
+<div class="mt-8">
+</div>
