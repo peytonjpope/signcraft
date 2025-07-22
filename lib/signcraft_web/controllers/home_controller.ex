@@ -14,11 +14,15 @@ defmodule SigncraftWeb.HomeController do
       redirect(conn, to: ~p"/users/log_in")
       |> halt()
     end
-    
+
     user_id = conn.assigns.current_user.id
     is_admin = conn.assigns.current_user.admin
     sentence = Signcraft.SentenceGenerator.random_sentence(user_id, is_admin)
     render(conn, :show, sentence: sentence)
+  end
+
+  def about(conn, _params) do
+    render(conn, :about)
   end
 
 end

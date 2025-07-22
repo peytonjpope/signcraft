@@ -72,6 +72,7 @@ defmodule SigncraftWeb.Router do
 
     get "/", HomeController, :redirect_to_home
     get "/home", HomeController, :show
+    get "/about", HomeController, :about
     resources "/word_types", WordTypeController
     resources "/words", WordController
     resources "/templates", TemplateController

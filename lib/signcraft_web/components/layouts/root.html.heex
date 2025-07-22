@@ -11,15 +11,19 @@
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
   </head>
-  <body class="bg-white min-h-screen flex flex-col">
+  <body class="bg-white min-h-screen flex flex-col max-w-">
     <div class="fixed shadow-sm top-0 left-0 right-0 z-50 bg-white border-b border-zinc-100">
-      <div class="relative flex items-center justify-between px-4 sm:px-6 lg:px-8 py-1">
+      <div class="relative flex items-center justify-between px-4 sm:px-6 lg:px-8 pt-1">
         <%= if @current_user do %>    
           <!-- User Badge on the left -->
           <div class="flex items-center space-x-2">
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-zinc-100 text-zinc-800">
-              <%= @current_user.username %>
-            </span>
+            <.link
+              href={~p"/users/settings"}
+              class="flex items-center gap-1 px-2 py-1 bg-zinc-100 hover:bg-zinc-200 rounded-full text-xs font-medium text-zinc-800 hover:text-zinc-900 transition-colors"
+            >
+              <.icon name="hero-user-solid" class="w-3.5 h-3.5" />
+              <span><%= @current_user.username %></span>
+            </.link>
           </div>
         <% else %>
          <div>
@@ -37,10 +41,10 @@
           <%= if @current_user do %>
             <li>
               <.link
-                href={~p"/users/settings"}
+                href={~p"/about"}
                 class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
               >
-                My Account
+                <.icon name="hero-information-circle" class="inline-block mr-1" />
               </.link>
             </li>
           <% else %>
@@ -57,9 +61,9 @@
       </div>
       
       <header class="px-4 sm:px-6 lg:px-8">
-        <div class="border-b border-zinc-100 pt-1 pb-5 text-sm">
+        <div class="border-b border-zinc-100 pb-5 text-sm">
           <div class="flex items-center justify-center">
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-1">
               <a href="/">
                 <.icon name="hero-hand-raised-solid" class="text-sky-600" />
               </a>
@@ -77,7 +81,7 @@
     </div>
     
     <!-- Add top padding to account for fixed header -->
-    <div class="pt-14">
+    <div class="pt-11">
       {@inner_content}
     </div>
   </body>

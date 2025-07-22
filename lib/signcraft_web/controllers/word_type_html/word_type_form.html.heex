@@ -1,6 +1,8 @@
 <.simple_form :let={f} for={@changeset} action={@action}>
   <.input field={f[:name]} type="text" label="Type Name" />
   <:actions>
-    <.button>Save Type</.button>
+    <div class="w-full text-center">
+      <.button>Save Type</.button>
+    </div>
   </:actions>
 </.simple_form>
