@@ -1,18 +1,79 @@
-# Signcraft
+# SignCraft 🤟
+**Version 1.2.1**
+[signcraft.peytonpope.com](https://signcraft.peytonjpope.com)
 
-To start your Phoenix server:
+> *A resource for ASL learners to maintain vocabulary and practice grammar, with the intention of promoting Deaf community engagement*
 
-  * Run `mix setup` to install and setup dependencies
-  * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+## What
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+### User Experience
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+SignCraft provides a structured approach to ASL vocabulary building and grammar practice:
 
-## Learn more
+1. **Create Word Types** - Set up categories like "noun", "verb", "adjective" to organize vocabulary
+2. **Build Templates** - Design sentence structures following ASL grammar patterns:
+   - `PRONOUN + VERB + NOUN` → "ME EAT FOOD"
+   - `ADJECTIVE + NOUN + VERB` → "BIG DOG RUN"
+3. **Add Vocabulary** - Build your personal word bank, categorized by word type
+4. **Practice & Generate** - Use templates to create random sentences for practice
 
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+### Technical Architecture
+- **Backend Framework:** Phoenix (Elixir/Erlang)
+- **Database:** PostgreSQL with Ecto
+- **Frontend:** Phoenix with Tailwind CSS
+- **Deployment:** Fly.io with Docker
+
+## Why
+
+### Purpose
+- **Grow and maintain your ASL vocabulary** with a customizable word bank designed for consistent review and long-term retention.
+
+- **Practice ASL-specific grammar patterns** through contextual sentence building that reflects natural language use.
+
+- **Promote engagement with the Deaf community** and culture by learning vocabulary and expressions rooted in real-world, culturally relevant contexts.
+
+## Where
+
+- **Live Application:** [signcraft.peytonpope.com](https://signcraft.peytonjpope.com)
+- **Source Code:** [github.com/peytonjpope/signcraft](https://github.com/peytonjpope/signcraft)
+- **Deployed on:** Fly.io
+
+## How
+
+
+**Prerequisites:**
+- Elixir 1.17+, Erlang/OTP 27+, PostgreSQL 14+, Node.js 18+
+
+**Setup:**
+```bash
+# Clone and setup
+mix setup
+
+# Start development server
+mix phx.server
+# Visit localhost:4000
+
+# Database management
+mix ecto.create
+mix ecto.migrate
+
+# Testing
+mix test
+```
+
+**Production Deployment:**
+```bash
+# Deploy to Fly.io
+fly deploy
+
+```
+
+## Who
+
+Created by **Peyton Pope** 
+
+- Portfolio: [peytonjpope.com](https://peytonjpope.com)
+- LinkedIn: [linkedin.com/in/peytonpope](https://linkedin.com/in/peytonpope)
+- GitHub: [github.com/peytonjpope](https://github.com/peytonjpope)
+
+---

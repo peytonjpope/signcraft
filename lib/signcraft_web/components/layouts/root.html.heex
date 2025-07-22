@@ -14,39 +14,35 @@
   <body class="bg-white min-h-screen flex flex-col max-w-">
     <div class="fixed shadow-sm top-0 left-0 right-0 z-50 bg-white border-b border-zinc-100">
       <div class="relative flex items-center justify-between px-4 sm:px-6 lg:px-8 pt-1">
-        <%= if @current_user do %>    
-          <!-- User Badge on the left -->
+        <%= if @current_user do %>
           <div class="flex items-center space-x-2">
+            <.link
+              href={~p"/about"}
+              class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+            >
+              <.icon name="hero-information-circle" class="inline-block mr-1" />
+            </.link>
+          </div>
+        <% else %>
+          <div>
+            <.link
+              href={~p"/users/register"}
+              class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+            >
+              Create Account
+            </.link>
+          </div>
+        <% end %>
+        
+        <ul class="flex items-center gap-4">
+          <%= if @current_user do %>
             <.link
               href={~p"/users/settings"}
               class="flex items-center gap-1 px-2 py-1 bg-zinc-100 hover:bg-zinc-200 rounded-full text-xs font-medium text-zinc-800 hover:text-zinc-900 transition-colors"
             >
+              <span>{@current_user.username}</span>
               <.icon name="hero-user-solid" class="w-3.5 h-3.5" />
-              <span><%= @current_user.username %></span>
             </.link>
-          </div>
-        <% else %>
-         <div>
-           <.link
-             href={~p"/users/register"}
-             class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
-           >
-             Create Account
-           </.link>
-         </div>
-        <% end %>
-        
-        <!-- Navigation moved to the right -->
-        <ul class="flex items-center gap-4">
-          <%= if @current_user do %>
-            <li>
-              <.link
-                href={~p"/about"}
-                class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
-              >
-                <.icon name="hero-information-circle" class="inline-block mr-1" />
-              </.link>
-            </li>
           <% else %>
             <li>
               <.link
@@ -59,7 +55,7 @@
           <% end %>
         </ul>
       </div>
-      
+
       <header class="px-4 sm:px-6 lg:px-8">
         <div class="border-b border-zinc-100 pb-5 text-sm">
           <div class="flex items-center justify-center">
@@ -80,7 +76,7 @@
       </header>
     </div>
     
-    <!-- Add top padding to account for fixed header -->
+<!-- Add top padding to account for fixed header -->
     <div class="pt-11">
       {@inner_content}
     </div>
