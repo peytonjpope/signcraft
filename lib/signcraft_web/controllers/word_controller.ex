@@ -10,7 +10,7 @@ defmodule SigncraftWeb.WordController do
 
     word_types = Content.list_word_types_for_user(user_id, is_admin)
 
-    words = Content.list_words_for_user(user_id, is_admin)
+    words = Content.list_words_for_current_user(user_id, is_admin)
     render(conn, :index, words: words, word_types: word_types)
   end
 

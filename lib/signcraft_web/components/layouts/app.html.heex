@@ -6,7 +6,7 @@
   </div>
 </main>
 
-<%= unless String.starts_with?(@conn.request_path, "/users") do %>
+<%= unless Regex.match?(~r/^\/users\/[a-zA-Z]/, @conn.request_path) do %>
   <footer class="fixed bottom-0 left-0 right-0 px-4 sm:px-6 lg:px-8 bg-white border-t border-zinc-100">
     <div class="flex items-center justify-center py-3">
       <div class="grid grid-cols-4 gap-3 max-w-lg w-full">
@@ -40,11 +40,23 @@
             <div class="text-xs font-medium text-zinc-900">Templates</div>
           <% end %>
         </.link>
-  
-        <.link href={~p"/words/new"} class="block p-3 text-center bg-zinc-900 rounded-lg hover:bg-zinc-800">
-          <.icon name="hero-squares-plus-solid" class="w-5 h-5 mx-auto mb-1 text-white"/>
-          <div class="text-xs font-medium text-white">Add Word</div>
-        </.link>
+
+        <%= if match?(%{admin: true}, @current_user) do %>
+          <.link href={~p"/users"} class="block p-3 text-center border border-zinc-200 rounded-lg hover:bg-zinc-50">
+            <%= if String.starts_with?(@conn.request_path, "/users") do %>
+              <.icon name="hero-users-solid" class="w-5 h-5 mx-auto mb-1 text-black"/>
+              <div class="text-xs font-medium text-black">Users</div>
+            <% else %>
+              <.icon name="hero-users-solid" class="w-5 h-5 mx-auto mb-1 text-zinc-600"/>
+              <div class="text-xs font-medium text-zinc-900">Users</div>
+            <% end %>
+          </.link>
+        <% else %>
+          <.link href={~p"/words/new"} class="block p-3 text-center bg-zinc-900 rounded-lg hover:bg-zinc-800">
+            <.icon name="hero-squares-plus-solid" class="w-5 h-5 mx-auto mb-1 text-white"/>
+            <div class="text-xs font-medium text-white">Add Word</div>
+          </.link>
+        <% end %>
       </div>
     </div>
   </footer>

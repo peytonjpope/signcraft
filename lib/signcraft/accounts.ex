@@ -62,6 +62,12 @@ defmodule Signcraft.Accounts do
   """
   def get_user!(id), do: Repo.get!(User, id)
 
+  ## get all users
+
+  def list_users do
+    Repo.all(User)
+  end
+
   ## User registration
 
   @doc """
@@ -244,9 +250,21 @@ defmodule Signcraft.Accounts do
     :ok
   end
 
-  ## Confirmation
+
   @doc """
-  removed
+  Deletes a user.
+
+  ## Examples
+
+      iex> delete_user(user)
+      {:ok, %User{}}
+
+      iex> delete_user(user)
+      {:error, %Ecto.Changeset{}}
+
   """
+  def delete_user(%User{} = user) do
+    Repo.delete(user)
+  end
 
 end

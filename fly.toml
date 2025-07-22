@@ -9,11 +9,10 @@ kill_signal = 'SIGTERM'
 
 [build]
 
-[deploy]
-  release_command = '/app/bin/migrate'
+
 
 [env]
-  PHX_HOST = 'signcraft.fly.dev'
+  PHX_HOST = 'signcraft.peytonjpope.com'
   PORT = '8080'
 
 [http_service]

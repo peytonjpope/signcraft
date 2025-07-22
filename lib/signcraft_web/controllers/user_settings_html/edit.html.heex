@@ -1,6 +1,6 @@
 <.header class="text-center mb-8">
   Account Settings
-  <:subtitle>Update username, password, or sign out</:subtitle>
+  <:subtitle>Keep your details up to date or sign out here</:subtitle>
 </.header>
 
 <div class="space-y-6">
@@ -72,13 +72,32 @@
     </div>
   </details>
 
+  <!-- Delete Account Section -->
+  <details class="border border-zinc-200 rounded-lg overflow-hidden">
+    <summary class="px-6 py-4 cursor-pointer hover:bg-zinc-50 font-medium text-zinc-900 border-b border-zinc-200">
+      Delete Account
+    </summary>
+    <div class="px-6 py-6">
+      <div class="text-center">
+        <.link 
+          href={~p"/users/#{@current_user}"} 
+          method="delete" 
+          data-confirm="Are you sure you want to delete your account? This cannot be undone. Type 'DELETE' to confirm."
+          class="inline-flex items-center px-6 py-2 text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700"
+        >
+          Delete My Account Permanently
+        </.link>
+      </div>
+    </div>
+  </details>
+
   <div class="pt-8 border-t border-zinc-200">
     <div class="text-center">
       <.link 
         href={~p"/users/log_out"} 
         method="delete" 
         data-confirm="Are you sure you want to sign out?"
-        class="inline-flex items-center px-6 py-2 text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-500"
+        class="inline-flex items-center px-6 py-2 text-sm font-medium border border-red-600 rounded-md text-red-600 hover:bg-red-100"
       >
         Log Out
       </.link>

@@ -17,16 +17,7 @@ defmodule SigncraftWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", SigncraftWeb do
-    pipe_through :browser
 
-    get "/", HomeController, :redirect_to_home
-    get "/home", HomeController, :show
-    resources "/word_types", WordTypeController
-    resources "/words", WordController
-    resources "/templates", TemplateController
-
-  end
 
   # Other scopes may use custom stacks.
   # scope "/api", SigncraftWeb do
@@ -75,4 +66,18 @@ defmodule SigncraftWeb.Router do
     delete "/users/log_out", UserSessionController, :delete
 
   end
+
+  scope "/", SigncraftWeb do
+    pipe_through :browser
+
+    get "/", HomeController, :redirect_to_home
+    get "/home", HomeController, :show
+    resources "/word_types", WordTypeController
+    resources "/words", WordController
+    resources "/templates", TemplateController
+    resources "/users", UsersController
+
+  end
+
+
 end

@@ -13,7 +13,7 @@ defmodule Signcraft.SentenceGenerator do
         # Generate words for each word type in the template structure
         sentence_words = Enum.map(random_template.structure, fn word_type_id ->
           # Get words of this type for the user
-          words = Content.list_words_for_user(user_id, is_admin)
+          words = Content.list_words_for_current_user(user_id, is_admin)
           |> Enum.filter(fn word -> word.word_type_id == word_type_id end)
 
           case words do

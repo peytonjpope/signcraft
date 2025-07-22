@@ -427,16 +427,21 @@ defmodule SigncraftWeb.CoreComponents do
 
   def header(assigns) do
     ~H"""
-    <header class={[@actions != [] && "flex items-center justify-between gap-6", @class]}>
-      <div>
-        <h1 class="text-lg font-semibold leading-8 text-zinc-800">
+    <header class={["relative flex items-center justify-center", @class]}>
+      <!-- Actions positioned absolutely on the right -->
+      <div :if={@actions != []} class="absolute right-0 flex-none">
+        {render_slot(@actions)}
+      </div>
+
+      <!-- Header content always centered -->
+      <div class="text-center">
+        <h1 class="text-lg font-semibold leading-6 text-zinc-800">
           {render_slot(@inner_block)}
         </h1>
-        <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600">
+        <p :if={@subtitle != []} class="mt-1 text-sm leading-5 text-zinc-600">
           {render_slot(@subtitle)}
         </p>
       </div>
-      <div class="flex-none">{render_slot(@actions)}</div>
     </header>
     """
   end
@@ -473,12 +478,12 @@ defmodule SigncraftWeb.CoreComponents do
       end
 
     ~H"""
-    <div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
-      <table class="w-[40rem] mt-11 sm:w-full">
+    <div class="w-full mt-3">
+      <table class="w-full">
         <thead class="text-sm text-left leading-6 text-zinc-500">
           <tr>
-            <th :for={col <- @col} class="p-0 pb-4 pr-6 font-normal">{col[:label]}</th>
-            <th :if={@action != []} class="relative p-0 pb-4">
+            <th :for={col <- @col} class="p-0 pb-1 pt-3 pr-4 font-normal">{col[:label]}</th>
+            <th :if={@action != []} class="relative p-0 pb-3">
               <span class="sr-only">{gettext("Actions")}</span>
             </th>
           </tr>
@@ -494,7 +499,7 @@ defmodule SigncraftWeb.CoreComponents do
               phx-click={@row_click && @row_click.(row)}
               class={["relative p-0", @row_click && "hover:cursor-pointer"]}
             >
-              <div class="block py-4 pr-6">
+              <div class="block py-3 pr-4">
                 <span class="absolute -inset-y-px right-0 -left-4 group-hover:bg-zinc-50 sm:rounded-l-xl" />
                 <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
                   {render_slot(col, @row_item.(row))}
@@ -502,7 +507,7 @@ defmodule SigncraftWeb.CoreComponents do
               </div>
             </td>
             <td :if={@action != []} class="relative w-14 p-0">
-              <div class="relative whitespace-nowrap py-4 text-right text-sm font-medium">
+              <div class="relative whitespace-nowrap py-3 text-right text-sm font-medium">
                 <span class="absolute -inset-y-px -right-4 left-0 group-hover:bg-zinc-50 sm:rounded-r-xl" />
                 <span
                   :for={action <- @action}
@@ -672,5 +677,35 @@ defmodule SigncraftWeb.CoreComponents do
   """
   def translate_errors(errors, field) when is_list(errors) do
     for {^field, {msg, opts}} <- errors, do: translate_error({msg, opts})
+  end
+
+  def time_ago(datetime) do
+    now = DateTime.utc_now()
+    diff_seconds = DateTime.diff(now, datetime, :second)
+
+    cond do
+      diff_seconds < 60 ->
+        "#{diff_seconds} seconds ago"
+
+      diff_seconds < 3600 ->
+        minutes = div(diff_seconds, 60)
+        "#{minutes} #{if minutes == 1, do: "minute", else: "minutes"} ago"
+
+      diff_seconds < 86400 ->
+        hours = div(diff_seconds, 3600)
+        "#{hours} #{if hours == 1, do: "hour", else: "hours"} ago"
+
+      diff_seconds < 2592000 ->
+        days = div(diff_seconds, 86400)
+        "#{days} #{if days == 1, do: "day", else: "days"} ago"
+
+      diff_seconds < 31536000 ->
+        months = div(diff_seconds, 2592000)
+        "#{months} #{if months == 1, do: "month", else: "months"} ago"
+
+      true ->
+        years = div(diff_seconds, 31536000)
+        "#{years} #{if years == 1, do: "year", else: "years"} ago"
+    end
   end
 end

@@ -132,7 +132,7 @@ defmodule Signcraft.Content do
     Repo.all(Word) |> Repo.preload(:word_type)
   end
 
-  def list_words_for_user(user_id, is_admin) do
+  def list_words_for_current_user(user_id, is_admin) do
     query = if !is_admin do
       from(w in Word,
         where: w.user_id == ^user_id,
@@ -148,6 +148,16 @@ defmodule Signcraft.Content do
     end
     Repo.all(query)
   end
+
+  def list_words_for_user(user_id) do
+    from(w in Word,
+      where: w.user_id == ^user_id,
+      preload: :word_type,
+      order_by: [asc: w.text]
+    )
+    |> Repo.all()
+  end
+
 
   @doc """
   Gets a single word.

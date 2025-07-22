@@ -1,0 +1,16 @@
+<.header>
+  All Users
+</.header>
+
+<.table id="users" rows={@users} row_click={&JS.navigate(~p"/users/#{&1}/")}>
+  <:col :let={user} label="Name"><%= user.username %></:col>
+  <:col :let={user} label="Created">
+    <%= time_ago(user.inserted_at) %>
+  </:col>
+  <:col :let={user} label="Words"> <%= user.word_count %> </:col>
+  <:action :let={user}>
+    <.link href={~p"/users/#{user}"}>
+      <.icon name="hero-information-circle" />
+    </.link>
+  </:action>
+</.table>
