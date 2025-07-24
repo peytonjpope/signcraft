@@ -1,6 +1,17 @@
 <.header>
+  <:left_actions>
+    <button type="button" onclick="toggleSearch()" class="text-sm">
+      <.icon name="hero-magnifying-glass-circle-solid" class="text-sky-600 inline-block mr-1 w-8 h-8" />
+    </button>
+  </:left_actions>
+
   All Users
 </.header>
+
+<!-- Search div that appears below header -->
+<div id="search-container" class="hidden mb-5">
+  <.multi_filter_table table_prefix="users" label="" filter_column={0} />
+</div>
 
 <.table id="users" rows={@users} row_click={&JS.navigate(~p"/users/#{&1}/")}>
   <:col :let={user} label="Name"><%= user.username %></:col>
@@ -14,3 +25,25 @@
     </.link>
   </:action>
 </.table>
+<div class="mt-10"></div>
+
+<script>
+function toggleSearch() {
+  const container = document.getElementById('search-container');
+  const input = document.getElementById('multi_filter__search_input_users');
+  
+  if (container.classList.contains('hidden')) {
+    container.classList.remove('hidden');
+    if (input) input.focus();
+  } else {
+    container.classList.add('hidden');
+    if (input) {
+      input.value = '';
+      // Trigger the filter reset
+      if (window.multiFilterWords_users) {
+        window.multiFilterWords_users();
+      }
+    }
+  }
+}
+</script>

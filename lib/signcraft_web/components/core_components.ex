@@ -423,8 +423,15 @@ defmodule SigncraftWeb.CoreComponents do
   slot :actions
 
   def header(assigns) do
+    assigns = assign_new(assigns, :left_actions, fn -> [] end)
+
     ~H"""
     <header class={["relative flex items-center justify-center", @class]}>
+      <!-- Left actions positioned absolutely on the left -->
+      <div :if={@left_actions != []} class="absolute left-0 flex-none">
+        {render_slot(@left_actions)}
+      </div>
+
       <!-- Actions positioned absolutely on the right -->
       <div :if={@actions != []} class="absolute right-0 flex-none">
         {render_slot(@actions)}
@@ -466,6 +473,8 @@ defmodule SigncraftWeb.CoreComponents do
     attr :label, :string
   end
 
+  attr :rest, :global, doc: "the arbitrary HTML attributes to apply to the table tag"
+
   slot :action, doc: "the slot for showing user actions in the last table column"
 
   def table(assigns) do
@@ -476,7 +485,7 @@ defmodule SigncraftWeb.CoreComponents do
 
     ~H"""
     <div class="w-full mt-3">
-      <table class="w-full">
+      <table class="w-full" id={@id} {@rest}>  <!-- Add id={@id} and {@rest} -->
         <thead class="text-sm text-left leading-6 text-zinc-500">
           <tr>
             <th :for={col <- @col} class="p-0 pb-1 pt-3 pr-4 font-normal">{col[:label]}</th>
@@ -486,7 +495,7 @@ defmodule SigncraftWeb.CoreComponents do
           </tr>
         </thead>
         <tbody
-          id={@id}
+          id={"#{@id}_body"}
           phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
           class="relative divide-y divide-zinc-100 border-t border-zinc-200 text-sm leading-6 text-zinc-700"
         >
@@ -704,5 +713,127 @@ defmodule SigncraftWeb.CoreComponents do
         years = div(diff_seconds, 31536000)
         "#{years} #{if years == 1, do: "year", else: "years"} ago"
     end
+  end
+
+  @doc """
+  Renders a filter input that searches across multiple tables.
+
+  ## Examples
+
+      <.multi_filter_table table_prefix="words" label="Search words" filter_column={0} />
+      <.multi_filter_table table_prefix="users" placeholder="Type to search..." />
+  """
+  attr :label, :string, default: "Filter"
+  attr :placeholder, :string, default: "Type to filter..."
+  attr :table_prefix, :string, required: true, doc: "Prefix of table IDs to filter (e.g. 'words' for tables like 'words_1', 'words_2')"
+  attr :filter_column, :integer, default: 0, doc: "Which column to search (0-based index)"
+
+  def multi_filter_table(assigns) do
+    assigns =
+      assigns
+      |> assign(:search_input_id, "multi_filter__search_input_#{assigns.table_prefix}")
+
+    ~H"""
+    <div class="my-2 filter-table filter-table--js-only">
+      <%!-- Search Input --%>
+      <label class="mt-2" for={@search_input_id}>
+        <span class="text-sm font-semibold leading-6 text-zinc-800">{@label}</span>
+      </label>
+      <div class="mt-1 flex gap-1 flex-wrap items-center">
+        <input
+          type="search"
+          name="search"
+          id={@search_input_id}
+          placeholder={@placeholder}
+          class={[
+            "rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6 mt-2",
+            "border-zinc-300 focus:border-zinc-400",
+            "disabled:bg-zinc-50 disabled:text-zinc-500 disabled:border-zinc-200"
+          ]}
+          oninput={"multiFilterWords_#{@table_prefix}()"}
+        />
+      </div>
+    </div>
+
+    <%!-- Disable with message if Javascript is not enabled --%>
+    <noscript>
+      <style>
+        .filter-table--js-only {
+          display: none !important;
+        }
+      </style>
+      <p class="my-2 text-xs text-zinc-600">
+        <.icon name="hero-exclamation-circle" /> Enable JavaScript to allow filtering.
+      </p>
+    </noscript>
+
+    <script type="module">
+      // Variables from Elixir
+      const searchInputId = "<%= @search_input_id %>";
+      const tablePrefix = "<%= @table_prefix %>";
+      const filterColumn = <%= @filter_column %>;
+
+      // Create global function for this specific filter
+      window[`multiFilterWords_${tablePrefix}`] = function() {
+        const searchInput = document.getElementById(searchInputId);
+        if (!searchInput) return;
+
+        const searchTerm = searchInput.value.toLowerCase();
+
+        // Find all tables that start with the prefix
+        const tables = document.querySelectorAll(`table[id^="${tablePrefix}_"], table[id="${tablePrefix}"]`);
+
+        tables.forEach(table => {
+          const rows = table.querySelectorAll('tbody tr');
+          let hasVisibleRows = false;
+
+          rows.forEach(row => {
+            // Skip any existing "no results" rows
+            if (row.classList.contains('filter-no-results')) {
+              return;
+            }
+
+            const cells = row.querySelectorAll('td');
+            const targetCell = cells[filterColumn];
+
+            if (targetCell) {
+              const cellText = targetCell.textContent.trim().toLowerCase();
+              if (cellText.includes(searchTerm) || searchTerm === '') {
+                showTableRow(row);
+                hasVisibleRows = true;
+              } else {
+                hideTableRow(row);
+              }
+            }
+          });
+
+          // Hide entire table section if no visible rows
+          const tableContainer = table.closest('div');
+          if (tableContainer) {
+            if (hasVisibleRows || searchTerm === '') {
+              tableContainer.style.display = '';
+            } else {
+              tableContainer.style.display = 'none';
+            }
+          }
+        });
+      };
+
+      // Helper functions
+      function showTableRow(row) {
+        row.hidden = false;
+        row.style.display = '';
+      }
+
+      function hideTableRow(row) {
+        row.hidden = true;
+        row.style.display = 'none';
+      }
+    </script>
+    """
+  end
+
+  def app_version do
+    Signcraft.MixProject.project()[:version]
   end
 end

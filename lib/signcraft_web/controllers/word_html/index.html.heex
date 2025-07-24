@@ -1,5 +1,12 @@
 <.header>
   My Words
+  
+  <:left_actions>
+    <button type="button" onclick="toggleSearch()" class="text-sm">
+      <.icon name="hero-magnifying-glass-circle-solid" class="text-sky-600 inline-block mr-1 w-8 h-8" />
+    </button>
+  </:left_actions>
+  
   <:actions>
     <.link href={~p"/words/new"}>
       <.button>Add</.button>
@@ -7,12 +14,26 @@
   </:actions>
 </.header>
 
+<!-- Search div that appears below header -->
+<div id="search-container" class="hidden mb-5">
+  <input
+    type="search"
+    id="word-search"
+    class={[
+      "rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6 mt-2",
+      "border-zinc-300 focus:border-zinc-400",
+      "disabled:bg-zinc-50 disabled:text-zinc-500 disabled:border-zinc-200"
+    ]}    
+    oninput="filterWords()"
+  />
+</div>
+
 <%= for word_type <- @word_types do %>
   <% words_for_type = Enum.filter(@words, fn word -> word.word_type_id == word_type.id end) %>
   <% type_title = "#{String.capitalize(word_type.name)}s" %>
   <%= if length(words_for_type) > 0 do %>
-    <.table id="words" rows={words_for_type} row_click={&JS.navigate(~p"/words/#{&1}/edit")}>
-      <:col :let={word} label={type_title}>{word.text}</:col>
+    <.table id={"words_#{word_type.id}"} rows={words_for_type} row_click={&JS.navigate(~p"/words/#{&1}/edit")}>
+      <:col :let={word} label={type_title}><%= word.text %></:col>
       <:action :let={word}>
         <.link href={~p"/words/#{word}"} method="delete" data-confirm="Are you sure?">
           <.icon name="hero-x-mark" />
@@ -41,8 +62,102 @@
         </tbody>
       </table>
     </div>
-  <%= end %>
-<%= end %>
+  <% end %>
+<% end %>
+<div class="mt-10"></div>
+<script>
+function toggleSearch() {
+  const container = document.getElementById('search-container');
+  const input = document.getElementById('word-search');
+  
+  if (container.classList.contains('hidden')) {
+    container.classList.remove('hidden');
+    if (input) input.focus();
+  } else {
+    container.classList.add('hidden');
+    if (input) {
+      input.value = '';
+      filterWords();
+    }
+  }
+}
 
-<div class="mt-8">
-</div>
+function filterWords() {
+  const searchTerm = document.getElementById('word-search').value.toLowerCase();
+  
+  // Find tables from .table components (with id="words_X")
+  const componentTables = document.querySelectorAll('table[id^="words_"]');
+  
+  // Find standalone tables (the "None" tables)
+  const standaloneTableContainers = document.querySelectorAll('div.overflow-y-auto');
+  
+  let totalVisibleRows = 0;
+  
+  // Handle .table component tables
+  componentTables.forEach(table => {
+    const rows = table.querySelectorAll('tbody tr');
+    let hasVisibleRows = false;
+    
+    rows.forEach(row => {
+      const firstCell = row.querySelector('td:first-child');
+      if (firstCell) {
+        const text = firstCell.textContent.trim().toLowerCase();
+        if (text.includes(searchTerm) || searchTerm === '') {
+          row.style.display = '';
+          hasVisibleRows = true;
+          totalVisibleRows++;
+        } else {
+          row.style.display = 'none';
+        }
+      }
+    });
+    
+    // Hide entire table section if no visible rows
+    const tableContainer = table.closest('div');
+    if (hasVisibleRows || searchTerm === '') {
+      tableContainer.style.display = '';
+    } else {
+      tableContainer.style.display = 'none';
+    }
+  });
+  
+  // Handle standalone "None" tables - hide them when searching
+  standaloneTableContainers.forEach(container => {
+    const noneSpan = container.querySelector('span.italic');
+    if (noneSpan && noneSpan.textContent.trim().toLowerCase() === 'none') {
+      if (searchTerm === '') {
+        container.style.display = '';
+      } else {
+        container.style.display = 'none';
+      }
+    }
+  });
+  
+  // Show/hide "no results" message
+  showNoResultsMessage(totalVisibleRows, searchTerm);
+}
+
+function showNoResultsMessage(visibleCount, searchTerm) {
+  // Remove existing no results message
+  const existingMessage = document.getElementById('no-results-message');
+  if (existingMessage) {
+    existingMessage.remove();
+  }
+  
+  // Show message if no results and there's a search term
+  if (visibleCount === 0 && searchTerm.trim() !== '') {
+    const message = document.createElement('div');
+    message.id = 'no-results-message';
+    message.className = 'text-center py-8 text-zinc-500';
+    message.innerHTML = `
+      <div class="text-sm italic text-zinc-500">No results matching '${searchTerm}'</div>
+    `;
+    
+    // Insert message after the search container
+    const searchContainer = document.getElementById('search-container');
+    if (searchContainer && searchContainer.nextElementSibling) {
+      searchContainer.parentNode.insertBefore(message, searchContainer.nextElementSibling);
+    }
+  }
+}
+</script>

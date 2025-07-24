@@ -1,21 +1,24 @@
 # SignCraft 🤟
-**Version 1.2.1**
-[signcraft.peytonpope.com](https://signcraft.peytonjpope.com)
+[🌐 signcraft.peytonpope.com](https://signcraft.peytonjpope.com)
 
 > *A resource for ASL learners to maintain vocabulary and practice grammar, with the intention of promoting Deaf community engagement*
+
+## v1.4.0
+- search bar
+- bug fixes
+
 
 ## What
 
 ### User Experience
 
-SignCraft provides a structured approach to ASL vocabulary building and grammar practice:
-
-1. **Create Word Types** - Set up categories like "noun", "verb", "adjective" to organize vocabulary
-2. **Build Templates** - Design sentence structures following ASL grammar patterns:
-   - `PRONOUN + VERB + NOUN` → "ME EAT FOOD"
-   - `ADJECTIVE + NOUN + VERB` → "BIG DOG RUN"
-3. **Add Vocabulary** - Build your personal word bank, categorized by word type
-4. **Practice & Generate** - Use templates to create random sentences for practice
+SignCraft provides an easy-to-use approach to ASL vocab building and grammar practice:
+1. **Get Started** - With carefully selected pre-installed common words, tpyes, and templates
+2. **Create Word Types** - Set up categories (usually parts of speech like "noun") to organize vocab words
+3. **Build Templates** - Design sentence structures following ASL grammar patterns. Example:
+   - `topic + subject + verb` → "FOOD ME EAT"
+4. **Add Vocabulary** - Build your personal word bank over time, categorized by word type
+5. **Practice & Generate** - Create random sentences to practice words you know
 
 ### Technical Architecture
 - **Backend Framework:** Phoenix (Elixir/Erlang)
@@ -25,8 +28,7 @@ SignCraft provides a structured approach to ASL vocabulary building and grammar 
 
 ## Why
 
-### Purpose
-- **Grow and maintain your ASL vocabulary** with a customizable word bank designed for consistent review and long-term retention.
+- **Grow and maintain your ASL vocabulary** with word bank for review and long-term retention.
 
 - **Practice ASL-specific grammar patterns** through contextual sentence building that reflects natural language use.
 
@@ -42,7 +44,7 @@ SignCraft provides a structured approach to ASL vocabulary building and grammar 
 
 
 **Prerequisites:**
-- Elixir 1.17+, Erlang/OTP 27+, PostgreSQL 14+, Node.js 18+
+- Elixir 1.17+, Erlang/OTP 27+, PostgreSQL 14+
 
 **Setup:**
 ```bash

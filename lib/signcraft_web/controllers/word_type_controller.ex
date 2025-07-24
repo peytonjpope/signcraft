@@ -3,6 +3,7 @@ defmodule SigncraftWeb.WordTypeController do
 
   alias Signcraft.Content
   alias Signcraft.Content.WordType
+  alias Ecto.Changeset
 
   def index(conn, _params) do
     user_id = conn.assigns.current_user.id
@@ -60,10 +61,17 @@ defmodule SigncraftWeb.WordTypeController do
 
   def delete(conn, %{"id" => id}) do
     word_type = Content.get_word_type!(id)
-    {:ok, _word_type} = Content.delete_word_type(word_type)
 
-    conn
-    |> put_flash(:info, "Word type deleted successfully.")
-    |> redirect(to: ~p"/word_types")
+    case Content.delete_word_type(word_type) do
+      {:ok, %WordType{name: name}} ->
+        conn
+        |> put_flash(:info, "Word type deleted successfully.")
+        |> redirect(to: ~p"/word_types")
+
+      {:error, %Changeset{} = changeset} ->
+        conn
+        |> put_flash(:error, "Cannot delete type belonging to associated word(s) or templates.")
+        |> redirect(to: ~p"/word_types")
+    end
   end
 end

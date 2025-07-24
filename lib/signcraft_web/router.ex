@@ -68,7 +68,7 @@ defmodule SigncraftWeb.Router do
   end
 
   scope "/", SigncraftWeb do
-    pipe_through :browser
+    pipe_through [:browser, :require_authenticated_user]
 
     get "/", HomeController, :redirect_to_home
     get "/home", HomeController, :show

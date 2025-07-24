@@ -14,25 +14,16 @@
   <body class="bg-white min-h-screen flex flex-col max-w-">
     <div class="fixed shadow-sm top-0 left-0 right-0 z-50 bg-white border-b border-zinc-100">
       <div class="relative flex items-center justify-between px-4 sm:px-6 lg:px-8 pt-1">
-        <%= if @current_user do %>
-          <div class="flex items-center space-x-2">
-            <.link
-              href={~p"/about"}
-              class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
-            >
-              <.icon name="hero-information-circle" class="inline-block mr-1" />
-            </.link>
-          </div>
-        <% else %>
-          <div>
-            <.link
-              href={~p"/users/register"}
-              class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
-            >
-              Create Account
-            </.link>
-          </div>
-        <% end %>
+        <div class="flex items-center space-x-2">
+          <.link
+            href={~p"/about"}
+            class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+          >
+            <.icon name="hero-information-circle" class="inline-block mr-1" />
+          </.link>
+        </div>
+        <!-- Empty div to maintain layout when logged out -->
+        <div></div>
         
         <ul class="flex items-center gap-4">
           <%= if @current_user do %>
@@ -45,12 +36,21 @@
             </.link>
           <% else %>
             <li>
-              <.link
-                href={~p"/users/log_in"}
-                class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
-              >
-                Log in
-              </.link>
+              <%= if @conn.request_path == "/users/log_in" do %>
+                <.link
+                  href={~p"/users/register"}
+                  class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+                >
+                  Create Account
+                </.link>
+              <% else %>
+                <.link
+                  href={~p"/users/log_in"}
+                  class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+                >
+                  Log in
+                </.link>
+              <% end %>
             </li>
           <% end %>
         </ul>

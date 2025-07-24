@@ -4,9 +4,12 @@ defmodule Signcraft.Content do
   """
 
   import Ecto.Query, warn: false
+  import Ecto.Changeset, only: [change: 1, add_error: 3]
   alias Signcraft.Repo
 
+  alias Signcraft.Content.Template
   alias Signcraft.Content.WordType
+  alias Signcraft.Content.Word
 
   @doc """
   Returns the list of word_types.
@@ -101,7 +104,24 @@ defmodule Signcraft.Content do
 
   """
   def delete_word_type(%WordType{} = word_type) do
-    Repo.delete(word_type)
+    # Check if any words use this word type
+    word_count = from(w in Word, where: w.word_type_id == ^word_type.id)
+                |> Repo.aggregate(:count, :id)
+
+    # Check if any templates use this word type in their structure
+    template_count = from(t in Template, where: ^word_type.id in t.structure)
+                    |> Repo.aggregate(:count, :id)
+
+    if word_count > 0 || template_count > 0 do
+      changeset =
+        word_type
+        |> change()
+        |> add_error(:base, "Cannot delete word type that is in use")
+
+      {:error, changeset}
+    else
+      Repo.delete(word_type)
+    end
   end
 
   @doc """
