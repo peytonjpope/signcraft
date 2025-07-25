@@ -31,8 +31,8 @@ defmodule SigncraftWeb.WordController do
     case Content.create_word(word_params, is_admin) do  # <- Add is_admin here
       {:ok, word} ->
         conn
-        |> put_flash(:info, "Word created successfully.")
-        |> redirect(to: ~p"/words/#{word}")
+        |> put_flash(:info, "Word '#{word.text}' added successfully!")
+        |> redirect(to: ~p"/words")
 
       {:error, %Ecto.Changeset{} = changeset} ->
         user_id = conn.assigns.current_user.id

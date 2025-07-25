@@ -20,6 +20,9 @@ defmodule Signcraft.Content.Template do
     |> validate_length(:name, min: 1, max: 100)
     |> validate_structure()
     |> put_change(:is_system, is_admin)
+    |> unique_constraint(:structure,
+      name: :templates_user_id_structure_index,
+      message: "You already have a template with this structure")
   end
 
   defp validate_structure(changeset) do

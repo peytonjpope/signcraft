@@ -1,4 +1,4 @@
-<div class="mx-auto max-w-2xl mt-14">
+<div class="mx-auto max-w-2xl mt-12">
   <.header class="text-center">
     Welcome to SignCraft
     <:subtitle>
@@ -7,23 +7,145 @@
   </.header>
 
   <!-- Generated Sentence Display -->
-<div class="mt-14 text-center">
-  <div class="relative inline-block">
-    <div class="absolute inset-0 bg-gradient-to-r from-blue-300 to-blue-500 rounded-lg blur opacity-50"></div>
-    <div class="relative bg-white rounded-lg px-8 py-6 shadow-md border border-blue-100">
-      <p class="text-2xl font-semibold text-zinc-900">
-        <%= @sentence %>
-      </p>
+  <div class="mt-14 text-center">
+    <div class="relative inline-block">
+      <div class="absolute inset-0 bg-gradient-to-r from-blue-300 to-blue-500 rounded-lg blur opacity-0 transition-opacity duration-500 ease-in" id="sentence-shadow"></div>
+      <div class="relative bg-white rounded-lg px-8 py-6 shadow-md border border-blue-100">
+        <p class="text-2xl font-semibold text-zinc-900">
+          <%= @sentence %>
+        </p>
+      </div>
     </div>
   </div>
-</div>
    
   <!-- Generate Button -->
   <div class="mt-10 text-center">
-    <.link href={~p"/home"} class="bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white px-6 py-3 text-m rounded-md shadow-lg">
+    <.link href={~p"/home"} class="bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white px-6 py-3 text-lg rounded-md shadow-lg">
       Generate Sentence
     </.link>
   </div>
-
-
 </div>
+
+<!-- Floating Targeting Button -->
+<div class="fixed bottom-22 left-1/2 transform -translate-x-1/2 z-40">
+  <!-- Targeting Menu (hidden by default) -->
+  <div id="targeting-menu" class="hidden mb-4 bg-white rounded-lg shadow-lg border border-zinc-200 p-4 min-w-[280px]">
+    <!-- Title -->
+    <%!-- <div class="text-center mb-3">
+      <h3 class="font-semibold text-zinc-800">Targeted Learning</h3>
+    </div> --%>
+    
+    <!-- Target Word -->
+    <div class="mb-4">
+      <select 
+        name="target_word_id" 
+        onchange="handleWordChange(this.value)"
+        class="w-full rounded-lg border-zinc-300 focus:border-zinc-400 text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6"
+      >
+        <%= for {label, value} <- @word_options do %>
+          <option value={value} selected={value == @selected_word_id}><%= label %></option>
+        <% end %>
+      </select>
+    </div>
+    
+    <!-- Target Template -->
+    <div class="mb-4">
+      <select 
+        name="target_template_id" 
+        onchange="handleTemplateChange(this.value)"
+        class="w-full rounded-lg border-zinc-300 focus:border-zinc-400 text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6"
+      >
+        <%= for {label, value} <- @template_options do %>
+          <option value={value} selected={value == @selected_template_id}><%= label %></option>
+        <% end %>
+      </select>
+    </div>
+    
+    <!-- None Button - clears targeting -->
+    <a href={~p"/home?clear_targeting=true"} class="block w-full text-center py-2 px-4 bg-sky-600 hover:bg-sky-700 rounded-md text-white text-sm font-medium">
+      None
+    </a>
+  </div>
+  
+  <!-- Targeting Button with Current Selection Display -->
+  <div class="flex justify-center mb-5">
+    <button 
+      id="targeting-button"
+      onclick="toggleTargeting()" 
+      class="flex items-center space-x-2 text-zinc-600  py-2 px-3 transition-colors p-1 border border-zinc-200 rounded-lg hover:bg-zinc-50"
+      title="Targeting Options"
+    >
+      <.icon name="hero-funnel-solid" class="w-4 h-4" />
+      <%= if @new_word != "" do %>
+        <span class="text-xs font-medium text-zinc-500"><%= @new_word %></span>
+      <% end %>
+      <%= if @new_template != "" do %>
+        <span class="text-xs font-medium text-zinc-500"><%= @new_template %></span>
+      <% end %>
+    </button>
+  </div>
+</div>
+
+<script>
+// Handle dropdown changes - auto-submit when selection is made
+function handleWordChange(value) {
+  if (value && value !== '') {
+    window.location.href = `/home?target_word_id=${value}`;
+  }
+}
+
+function handleTemplateChange(value) {
+  if (value && value !== '') {
+    window.location.href = `/home?target_template_id=${value}`;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const sentenceShadow = document.getElementById('sentence-shadow');
+
+  if (sentenceShadow) {
+    // Reset animation classes if needed
+    sentenceShadow.classList.remove('opacity-50');
+    sentenceShadow.classList.add('opacity-0');
+
+    setTimeout(() => {
+      sentenceShadow.classList.remove('opacity-0');
+      sentenceShadow.classList.add('opacity-50');
+    }, 100); // Delay to ensure transition
+  }
+});
+
+
+// Targeting functionality
+let isTargetingOpen = false;
+
+function toggleTargeting() {
+  const menu = document.getElementById('targeting-menu');
+  const button = document.getElementById('targeting-button');
+  
+  if (isTargetingOpen) {
+    menu.classList.add('hidden');
+    button.classList.remove('text-sky-600');
+    button.classList.add('text-zinc-600', 'hover:text-sky-700');
+    isTargetingOpen = false;
+  } else {
+    menu.classList.remove('hidden');
+    button.classList.remove('text-zinc-600', 'hover:text-sky-700');
+    button.classList.add('text-sky-600');
+    isTargetingOpen = true;
+  }
+}
+
+// Close menu when clicking outside
+document.addEventListener('click', function(event) {
+  const menu = document.getElementById('targeting-menu');
+  const button = document.getElementById('targeting-button');
+  
+  if (!menu.contains(event.target) && !button.contains(event.target)) {
+    menu.classList.add('hidden');
+    button.classList.remove('text-sky-600');
+    button.classList.add('text-zinc-600', 'hover:text-sky-700');
+    isTargetingOpen = false;
+  }
+});
+</script>

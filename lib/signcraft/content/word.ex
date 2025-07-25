@@ -19,6 +19,9 @@ defmodule Signcraft.Content.Word do
     |> gloss_text()
     |> put_change(:is_system, is_admin)
     |> validate_length(:text, min: 1, max: 50)
+    |> unique_constraint(:text,
+      name: :words_user_id_text_index,
+      message: "You already have a word with this text.")
   end
 
   # Trim whitespace and convert to uppercase

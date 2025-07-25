@@ -1,7 +1,7 @@
 <.header>
   <:left_actions>
-    <button type="button" onclick="toggleSearch()" class="text-sm">
-      <.icon name="hero-magnifying-glass-circle-solid" class="text-sky-600 inline-block mr-1 w-8 h-8" />
+    <button type="button" onclick="toggleSearch()" class="text-zinc-600 hover:text-sky-600 transition-colors" id="search-btn">
+      <.icon name="hero-magnifying-glass-circle-solid" class="w-8 h-8" />
     </button>
   </:left_actions>
 
@@ -31,12 +31,19 @@
 function toggleSearch() {
   const container = document.getElementById('search-container');
   const input = document.getElementById('multi_filter__search_input_users');
+  const searchBtn = document.getElementById('search-btn');
   
   if (container.classList.contains('hidden')) {
     container.classList.remove('hidden');
+    // Set active state
+    searchBtn.classList.remove('text-zinc-600');
+    searchBtn.classList.add('text-sky-600');
     if (input) input.focus();
   } else {
     container.classList.add('hidden');
+    // Set inactive state
+    searchBtn.classList.remove('text-sky-600');
+    searchBtn.classList.add('text-zinc-600');
     if (input) {
       input.value = '';
       // Trigger the filter reset

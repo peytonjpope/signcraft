@@ -18,6 +18,9 @@ defmodule Signcraft.Content.WordType do
     |> type_text_formate()
     |> put_change(:is_system, is_admin)
     |> validate_length(:name, min: 1, max: 50)
+    |> unique_constraint(:name,
+      name: :word_types_user_id_name_index,
+      message: "You already have a word type with this name")
   end
 
   # Trim whitespace and convert to lowercase

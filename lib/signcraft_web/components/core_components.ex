@@ -365,6 +365,15 @@ defmodule SigncraftWeb.CoreComponents do
 
   # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
+    # Add autocomplete="off" by default, unless specified otherwise
+    assigns = assign_new(assigns, :autocomplete, fn ->
+      case assigns[:type] do
+        "password" -> "current-password"  # Allow password autofill
+        "email" -> "email"               # Allow email autofill
+        _ -> "off"                       # Disable for everything else
+      end
+    end)
+
     ~H"""
     <div>
       <.label for={@id}>{@label}</.label>
@@ -373,6 +382,7 @@ defmodule SigncraftWeb.CoreComponents do
         name={@name}
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+        autocomplete={@autocomplete}
         class={[
           "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
           @errors == [] && "border-zinc-300 focus:border-zinc-400",
@@ -745,6 +755,7 @@ defmodule SigncraftWeb.CoreComponents do
           name="search"
           id={@search_input_id}
           placeholder={@placeholder}
+          autocomplete="off"
           class={[
             "rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6 mt-2",
             "border-zinc-300 focus:border-zinc-400",

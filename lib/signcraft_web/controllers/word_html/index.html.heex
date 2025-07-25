@@ -2,9 +2,48 @@
   My Words
   
   <:left_actions>
-    <button type="button" onclick="toggleSearch()" class="text-sm">
-      <.icon name="hero-magnifying-glass-circle-solid" class="text-sky-600 inline-block mr-1 w-8 h-8" />
-    </button>
+    <div class="flex items-center space-x-2">
+      <button type="button" onclick="toggleSearch()" class="text-zinc-600 hover:text-sky-600 transition-colors" id="search-btn">
+        <.icon name="hero-magnifying-glass-circle-solid" class="w-8 h-8" />
+      </button>
+      
+      <!-- Type Filter Dropdown - always visible -->
+      <div class="relative">
+        <button 
+          type="button" 
+          onclick="toggleTypeFilter()" 
+          class="text-zinc-600 hover:text-sky-600 transition-colors"
+          id="type-filter-btn"
+          title="Filter by type"
+        >
+          <.icon name="hero-funnel-solid" class="w-6 h-6" />
+        </button>
+        
+        <!-- Dropdown Menu -->
+        <div id="type-filter-menu" class="hidden absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-zinc-200 z-10" style="margin-left: -3rem;">
+          <div class="py-1">
+            <button 
+              type="button" 
+              onclick="filterByType('')" 
+              class="w-full text-left px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 transition-colors"
+              data-type-name=""
+            >
+              All Types
+            </button>
+            <%= for word_type <- @word_types do %>
+              <button 
+                type="button" 
+                class="w-full text-left px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-50 transition-colors"
+                data-type-name={word_type.name}
+                onclick="filterByType(this.dataset.typeName)"
+              >
+                <%= String.capitalize(word_type.name) %>s
+              </button>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
   </:left_actions>
   
   <:actions>
@@ -19,6 +58,8 @@
   <input
     type="search"
     id="word-search"
+    placeholder="Type to filter..."
+    autocomplete="off"
     class={[
       "rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6 mt-2",
       "border-zinc-300 focus:border-zinc-400",
@@ -32,7 +73,7 @@
   <% words_for_type = Enum.filter(@words, fn word -> word.word_type_id == word_type.id end) %>
   <% type_title = "#{String.capitalize(word_type.name)}s" %>
   <%= if length(words_for_type) > 0 do %>
-    <.table id={"words_#{word_type.id}"} rows={words_for_type} row_click={&JS.navigate(~p"/words/#{&1}/edit")}>
+    <.table id={"words_#{word_type.id}"} rows={words_for_type} row_click={&JS.navigate(~p"/words/#{&1}/edit")} data-type={word_type.name}>
       <:col :let={word} label={type_title}><%= word.text %></:col>
       <:action :let={word}>
         <.link href={~p"/words/#{word}"} method="delete" data-confirm="Are you sure?">
@@ -40,96 +81,175 @@
         </.link>
       </:action>
     </.table>
-  <% else %>
-     <div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
-      <table class="w-[40rem] mt-11 sm:w-full">
-        <thead class="text-sm text-left leading-6 text-zinc-500">
-          <tr>
-            <th class="p-0 pb-4 pr-6 font-normal"><%= type_title %></th>
-          </tr>
-        </thead>
-        <tbody class="relative divide-y divide-zinc-100 border-t border-zinc-200 text-sm leading-6 text-zinc-700">
-          <tr class="group">
-            <td class="relative p-0">
-              <div class="block py-4 pr-6">
-                <span class="absolute -inset-y-px right-0 -left-4 sm:rounded-l-xl"></span>
-                <span class="relative italic text-zinc-500">
-                  None 
-                </span>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  <% end %>
+    <% else %>
+      <div class="w-full mt-3" data-type={word_type.name}>
+        <table class="w-full">
+          <thead class="text-sm text-left leading-6 text-zinc-500">
+            <tr>
+              <th class="p-0 pb-1 pt-3 pr-4 font-normal"><%= type_title %></th>
+            </tr>
+          </thead>
+          <tbody class="relative divide-y divide-zinc-100 border-t border-zinc-200 text-sm leading-6 text-zinc-700">
+            <tr class="group">
+              <td class="relative p-0">
+                <div class="block py-3 pr-4">
+                  <span class="absolute -inset-y-px right-0 -left-4 sm:rounded-l-xl" />
+                  <span class="relative italic text-zinc-500">
+                    None 
+                  </span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
 <% end %>
 <div class="mt-10"></div>
+
 <script>
+let currentTypeFilter = '';
+let isTypeFilterOpen = false;
+
 function toggleSearch() {
   const container = document.getElementById('search-container');
   const input = document.getElementById('word-search');
+  const searchBtn = document.getElementById('search-btn');
   
   if (container.classList.contains('hidden')) {
+    // Close type filter if open
+    closeTypeFilter();
+    
+    // Open search
     container.classList.remove('hidden');
+    searchBtn.classList.remove('text-zinc-600');
+    searchBtn.classList.add('text-sky-600');
     if (input) input.focus();
   } else {
+    // Close search
     container.classList.add('hidden');
+    searchBtn.classList.remove('text-sky-600');
+    searchBtn.classList.add('text-zinc-600');
     if (input) {
       input.value = '';
-      filterWords();
+      filterWords(); // Keep type filter but clear search
     }
+  }
+}
+
+function toggleTypeFilter() {
+  const menu = document.getElementById('type-filter-menu');
+  const button = document.getElementById('type-filter-btn');
+  
+  if (isTypeFilterOpen) {
+    closeTypeFilter();
+  } else {
+    // Close search if open
+    const searchContainer = document.getElementById('search-container');
+    const searchBtn = document.getElementById('search-btn');
+    if (!searchContainer.classList.contains('hidden')) {
+      searchContainer.classList.add('hidden');
+      searchBtn.classList.remove('text-sky-600');
+      searchBtn.classList.add('text-zinc-600');
+      const input = document.getElementById('word-search');
+      if (input) {
+        input.value = '';
+        filterWords();
+      }
+    }
+    
+    // Open type filter
+    menu.classList.remove('hidden');
+    button.classList.remove('text-zinc-600');
+    button.classList.add('text-sky-600');
+    isTypeFilterOpen = true;
+  }
+}
+
+function closeTypeFilter() {
+  const menu = document.getElementById('type-filter-menu');
+  const button = document.getElementById('type-filter-btn');
+  
+  menu.classList.add('hidden');
+  if (currentTypeFilter === '') {
+    button.classList.remove('text-sky-600');
+    button.classList.add('text-zinc-600');
+  }
+  isTypeFilterOpen = false;
+}
+
+function filterByType(typeName) {
+  currentTypeFilter = typeName;
+  updateTypeFilterButton();
+  closeTypeFilter();
+  filterWords();
+}
+
+function updateTypeFilterButton() {
+  const button = document.getElementById('type-filter-btn');
+  
+  if (currentTypeFilter === '') {
+    button.classList.remove('text-sky-600');
+    button.classList.add('text-zinc-600');
+    button.title = 'Filter by type';
+  } else {
+    button.classList.remove('text-zinc-600');
+    button.classList.add('text-sky-600');
+    button.title = `Filtering by: ${currentTypeFilter}`;
   }
 }
 
 function filterWords() {
   const searchTerm = document.getElementById('word-search').value.toLowerCase();
   
-  // Find tables from .table components (with id="words_X")
-  const componentTables = document.querySelectorAll('table[id^="words_"]');
-  
-  // Find standalone tables (the "None" tables)
-  const standaloneTableContainers = document.querySelectorAll('div.overflow-y-auto');
+  // Find all table containers (both component tables and standalone tables)
+  const allContainers = document.querySelectorAll('[data-type]');
   
   let totalVisibleRows = 0;
   
-  // Handle .table component tables
-  componentTables.forEach(table => {
-    const rows = table.querySelectorAll('tbody tr');
-    let hasVisibleRows = false;
+  allContainers.forEach(container => {
+    const containerType = container.getAttribute('data-type');
+    let shouldShowContainer = false;
     
-    rows.forEach(row => {
-      const firstCell = row.querySelector('td:first-child');
-      if (firstCell) {
-        const text = firstCell.textContent.trim().toLowerCase();
-        if (text.includes(searchTerm) || searchTerm === '') {
-          row.style.display = '';
-          hasVisibleRows = true;
-          totalVisibleRows++;
-        } else {
-          row.style.display = 'none';
-        }
-      }
-    });
+    // Check if container matches type filter
+    const matchesTypeFilter = currentTypeFilter === '' || containerType === currentTypeFilter;
     
-    // Hide entire table section if no visible rows
-    const tableContainer = table.closest('div');
-    if (hasVisibleRows || searchTerm === '') {
-      tableContainer.style.display = '';
-    } else {
-      tableContainer.style.display = 'none';
+    if (!matchesTypeFilter) {
+      container.style.display = 'none';
+      return;
     }
-  });
-  
-  // Handle standalone "None" tables - hide them when searching
-  standaloneTableContainers.forEach(container => {
-    const noneSpan = container.querySelector('span.italic');
-    if (noneSpan && noneSpan.textContent.trim().toLowerCase() === 'none') {
-      if (searchTerm === '') {
-        container.style.display = '';
-      } else {
-        container.style.display = 'none';
-      }
+    
+    // Check if it's a table component or standalone table
+    const table = container.querySelector('table') || container;
+    const rows = table.querySelectorAll('tbody tr');
+    
+    // Handle word filtering
+    if (rows.length > 0) {
+      rows.forEach(row => {
+        const firstCell = row.querySelector('td:first-child');
+        if (firstCell) {
+          const text = firstCell.textContent.trim().toLowerCase();
+          const isNoneRow = text === 'none';
+          
+          if (!isNoneRow && (text.includes(searchTerm) || searchTerm === '')) {
+            row.style.display = '';
+            shouldShowContainer = true;
+            totalVisibleRows++;
+          } else if (isNoneRow && searchTerm === '') {
+            row.style.display = '';
+            shouldShowContainer = true;
+          } else {
+            row.style.display = 'none';
+          }
+        }
+      });
+    }
+    
+    // Show/hide container based on whether it has visible content
+    if (shouldShowContainer || (searchTerm === '' && matchesTypeFilter)) {
+      container.style.display = '';
+    } else {
+      container.style.display = 'none';
     }
   });
   
@@ -144,13 +264,23 @@ function showNoResultsMessage(visibleCount, searchTerm) {
     existingMessage.remove();
   }
   
-  // Show message if no results and there's a search term
-  if (visibleCount === 0 && searchTerm.trim() !== '') {
+  // Show message if no results and there's a search term or type filter
+  if (visibleCount === 0 && (searchTerm.trim() !== '' || currentTypeFilter !== '')) {
     const message = document.createElement('div');
     message.id = 'no-results-message';
     message.className = 'text-center py-8 text-zinc-500';
+    
+    let messageText = '';
+    if (searchTerm.trim() !== '' && currentTypeFilter !== '') {
+      messageText = `No ${currentTypeFilter}s matching '${searchTerm}'`;
+    } else if (searchTerm.trim() !== '') {
+      messageText = `No results matching '${searchTerm}'`;
+    } else if (currentTypeFilter !== '') {
+      messageText = `No ${currentTypeFilter}s found`;
+    }
+    
     message.innerHTML = `
-      <div class="text-sm italic text-zinc-500">No results matching '${searchTerm}'</div>
+      <div class="text-sm italic text-zinc-500">${messageText}</div>
     `;
     
     // Insert message after the search container
@@ -160,4 +290,14 @@ function showNoResultsMessage(visibleCount, searchTerm) {
     }
   }
 }
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+  const menu = document.getElementById('type-filter-menu');
+  const button = document.getElementById('type-filter-btn');
+  
+  if (!menu.contains(event.target) && !button.contains(event.target)) {
+    closeTypeFilter();
+  }
+});
 </script>

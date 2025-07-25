@@ -3,9 +3,12 @@
 
 > *A resource for ASL learners to maintain vocabulary and practice grammar, with the intention of promoting Deaf community engagement*
 
-## v1.4.0
-- search bar
-- bug fixes
+## v1.5.0
+
+### Features
+- Filter words by category
+- Target a specific template or word
+- Prevented duplicate words types and structures
 
 
 ## What

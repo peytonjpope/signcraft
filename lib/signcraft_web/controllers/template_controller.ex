@@ -37,8 +37,8 @@ defmodule SigncraftWeb.TemplateController do
     case Content.create_template(template_params, is_admin) do
       {:ok, template} ->
         conn
-        |> put_flash(:info, "Template created successfully.")
-        |> redirect(to: ~p"/templates/#{template}")
+        |> put_flash(:info, "Template '#{template.name}' created successfully!")
+        |> redirect(to: ~p"/templates")
 
       {:error, %Ecto.Changeset{} = changeset} ->
         word_types = Content.list_word_types_for_user(conn.assigns.current_user.id, conn.assigns.current_user.admin)

@@ -1,7 +1,7 @@
 <div class="template-builder max-w-2xl mx-auto">
   <.simple_form :let={f} for={@changeset} action={@action}>
     <.error :if={@changeset.action}>
-      Oops, something went wrong! Please check the errors below.
+      A template with this structure already exists.
     </.error>
     
     <.input field={f[:name]} type="text" label="Template Name" placeholder="ex. Simple Sentence" required />

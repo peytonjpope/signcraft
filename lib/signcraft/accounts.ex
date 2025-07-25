@@ -8,7 +8,7 @@ defmodule Signcraft.Accounts do
 
   alias Signcraft.Accounts.{User, UserToken, UserNotifier}
 
-  alias Signcraft.Content.{WordType, Word, Template}
+  alias Signcraft.Content
 
   ## Database getters
 

@@ -25,8 +25,8 @@ defmodule SigncraftWeb.WordTypeController do
     case Content.create_word_type(word_type_params, is_admin) do
       {:ok, word_type} ->
         conn
-        |> put_flash(:info, "Word type created successfully.")
-        |> redirect(to: ~p"/word_types/#{word_type}")
+        |> put_flash(:info, "Word type '#{word_type.name}' created successfully!")
+        |> redirect(to: ~p"/word_types")
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, :new, changeset: changeset)
