@@ -9,8 +9,8 @@
   </.header>
 
 <!-- Combined Generated Sentence Display -->
-<div class="mt-14 text-center px-4 sm:px-0">
-  <div class="relative inline-block w-full max-w-md">
+<div class="mt-8 sm:mt-10 text-center px-0 sm:px-0">
+  <div class="relative inline-block w-full max-w-lg sm:max-w-md ">
     <!-- Blue glow background (with blur) -->
     <div class="absolute inset-0 bg-gradient-to-r from-blue-300 to-blue-500 rounded-lg blur opacity-50 transition-all duration-700 ease-out" id="sentence-shadow"></div>
     
@@ -24,8 +24,6 @@
   </div>
 </div>
 
-
-   
   <!-- Generate Button -->
   <div class="mt-8 sm:mt-10 text-center px-4 sm:px-0">
     <.link href={~p"/home"} class="bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-600 hover:to-sky-700 text-white px-6 py-3 sm:px-6 sm:py-3 text-md sm:text-lg rounded-md shadow-lg inline-block">
@@ -155,4 +153,12 @@ document.addEventListener('click', function(event) {
     isTargetingOpen = false;
   }
 });
+
+document.addEventListener("keydown", function(e) {
+  if (e.code === "Space") {
+    e.preventDefault(); // Optional: prevents page scrolling
+    location.reload();  // Reloads the page
+  }
+});
+
 </script>

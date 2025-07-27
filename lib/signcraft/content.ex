@@ -23,17 +23,17 @@ defmodule Signcraft.Content do
   def list_word_types do
     Repo.all(WordType)
   end
-
+  
   def list_word_types_for_user(user_id, is_admin) do
     query = if !is_admin do
       from(wt in WordType,
         where: wt.user_id == ^user_id,
-        order_by: [asc: wt.name]
+        order_by: [asc: wt.is_number_type, asc: wt.name]
       )
     else
       from(wt in WordType,
         where: wt.is_system == true,
-        order_by: [asc: wt.name]
+        order_by: [asc: wt.is_number_type, asc: wt.name]
       )
     end
     Repo.all(query)
@@ -135,6 +135,11 @@ defmodule Signcraft.Content do
   """
   def change_word_type(%WordType{} = word_type, attrs \\ %{}) do
     WordType.changeset(word_type, attrs)
+  end
+
+
+  def get_word_type_with_preload!(id) do
+    Repo.get!(WordType, id)
   end
 
   alias Signcraft.Content.Word

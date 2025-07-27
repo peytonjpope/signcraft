@@ -39,13 +39,7 @@ defmodule Signcraft.SentenceGenerator do
   # Helper function to generate sentence from template
   defp generate_sentence_from_template(template, user_id, is_admin) do
     sentence_words = Enum.map(template.structure, fn word_type_id ->
-      words = Content.list_words_for_current_user(user_id, is_admin)
-      |> Enum.filter(fn word -> word.word_type_id == word_type_id end)
-
-      case words do
-        [] -> "[missing]"
-        available_words -> Enum.random(available_words).text
-      end
+      generate_word_for_type_id(word_type_id, user_id, is_admin)
     end)
 
     Enum.join(sentence_words, " ")
@@ -62,19 +56,31 @@ defmodule Signcraft.SentenceGenerator do
           # Use the target word for the first occurrence of this word type
           {target_word.text, true}
         else
-          # Use a random word of this type
-          words = Content.list_words_for_current_user(user_id, is_admin)
-          |> Enum.filter(fn word -> word.word_type_id == word_type_id end)
-
-          word_text = case words do
-            [] -> "[missing]"
-            available_words -> Enum.random(available_words).text
-          end
-
+          # Use generated word (number or regular word)
+          word_text = generate_word_for_type_id(word_type_id, user_id, is_admin)
           {word_text, target_used}
         end
       end)
 
     Enum.join(sentence_words, " ")
+  end
+
+  # Core function to generate a word for a given word type ID
+  defp generate_word_for_type_id(word_type_id, user_id, is_admin) do
+    word_type = Content.get_word_type!(word_type_id)
+
+    if word_type.is_number_type do
+      # Generate random number in range
+      Enum.random(word_type.number_min..word_type.number_max) |> to_string()
+    else
+      # Get regular words of this type
+      words = Content.list_words_for_current_user(user_id, is_admin)
+      |> Enum.filter(fn word -> word.word_type_id == word_type_id end)
+
+      case words do
+        [] -> "[missing]"
+        available_words -> Enum.random(available_words).text
+      end
+    end
   end
 end

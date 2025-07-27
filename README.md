@@ -9,6 +9,7 @@
 - Filter words by category
 - Target a specific template or word
 - Prevented duplicate words types and structures
+- NUMBER types. Select a min and max range to be generated
 
 
 ## What

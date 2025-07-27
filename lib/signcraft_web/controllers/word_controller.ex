@@ -20,6 +20,7 @@ defmodule SigncraftWeb.WordController do
     is_admin = conn.assigns.current_user.admin
 
     word_types = Content.list_word_types_for_user(user_id, is_admin)
+    |> Enum.filter(fn word_type -> not word_type.is_number_type end)
 
     render(conn, :new, changeset: changeset, word_types: word_types)
   end
@@ -54,6 +55,8 @@ defmodule SigncraftWeb.WordController do
     is_admin = conn.assigns.current_user.admin
     user_id = conn.assigns.current_user.id
     word_types = Content.list_word_types_for_user(user_id, is_admin)
+    |> Enum.filter(fn word_type -> not word_type.is_number_type end)
+
     render(conn, :edit, word: word, changeset: changeset, word_types: word_types)
 
   end

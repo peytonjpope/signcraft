@@ -1,8 +1,51 @@
 <.simple_form :let={f} for={@changeset} action={@action}>
   <.input field={f[:name]} type="text" label="Type Name" />
+  
+  <!-- Number Type Configuration -->
+  <div class="space-y-4">
+    <.input 
+      field={f[:is_number_type]} 
+      type="checkbox" 
+      label="Number Type" 
+      onchange="toggleNumberFields(this.checked)"
+    />
+    
+    <div id="number-fields" class="space-y-4" style="display: none;">
+      <!-- Min/Max Inputs -->
+      <div class="grid grid-cols-2 gap-4">
+        <.input field={f[:number_min]} type="number" label="Minimum" min="1" />
+        <.input field={f[:number_max]} type="number" label="Maximum" min="1" />
+      </div>
+    </div>
+  </div>
+  
   <:actions>
     <div class="w-full text-center">
       <.button>Save Type</.button>
     </div>
   </:actions>
 </.simple_form>
+
+<script>
+// Show/hide number fields based on checkbox
+function toggleNumberFields(isChecked) {
+  const numberFields = document.getElementById('number-fields');
+  if (isChecked) {
+    numberFields.style.display = 'block';
+  } else {
+    numberFields.style.display = 'none';
+    // Clear the fields when hiding
+    document.querySelector('input[name="word_type[number_min]"]').value = '';
+    document.querySelector('input[name="word_type[number_max]"]').value = '';
+    document.getElementById('preset-ranges').value = '';
+  }
+}
+
+// Show number fields if checkbox is already checked (for edit forms)
+document.addEventListener('DOMContentLoaded', function() {
+  const checkbox = document.querySelector('input[name="word_type[is_number_type]"]');
+  if (checkbox && checkbox.checked) {
+    toggleNumberFields(true);
+  }
+});
+</script>

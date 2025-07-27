@@ -9,6 +9,12 @@
 
 <.table id="word_types" rows={@word_types} row_click={&JS.navigate(~p"/word_types/#{&1}/edit")}>
   <:col :let={word_type} label="Name">{word_type.name}</:col>
+  <:col :let={word_type} label="Range">
+    <%= if word_type.is_number_type do %>
+      <%= word_type.number_min %>-<%= word_type.number_max %>
+    <% else %>
+    <% end %>
+  </:col>
   <:action :let={word_type}>
     <.link href={~p"/word_types/#{word_type}"} method="delete" data-confirm="Are you sure?">
       <.icon name="hero-x-mark" />
