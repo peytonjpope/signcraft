@@ -10,7 +10,7 @@
       onchange="toggleNumberFields(this.checked)"
     />
     
-    <div id="number-fields" class="space-y-4" style="display: none;">
+    <div id="number-fields" class="hidden">
       <!-- Min/Max Inputs -->
       <div class="grid grid-cols-2 gap-4">
         <.input field={f[:number_min]} type="number" label="Minimum" min="1" />
@@ -30,22 +30,58 @@
 // Show/hide number fields based on checkbox
 function toggleNumberFields(isChecked) {
   const numberFields = document.getElementById('number-fields');
+  console.log('toggleNumberFields called with:', isChecked);
+  console.log('numberFields element:', numberFields);
+  
   if (isChecked) {
+    numberFields.classList.remove('hidden');
     numberFields.style.display = 'block';
+    console.log('Showing number fields');
   } else {
+    numberFields.classList.add('hidden');
     numberFields.style.display = 'none';
+    console.log('Hiding number fields');
     // Clear the fields when hiding
-    document.querySelector('input[name="word_type[number_min]"]').value = '';
-    document.querySelector('input[name="word_type[number_max]"]').value = '';
-    document.getElementById('preset-ranges').value = '';
+    const minField = document.querySelector('input[name="word_type[number_min]"]');
+    const maxField = document.querySelector('input[name="word_type[number_max]"]');
+    if (minField) minField.value = '';
+    if (maxField) maxField.value = '';
   }
 }
 
-// Show number fields if checkbox is already checked (for edit forms)
-document.addEventListener('DOMContentLoaded', function() {
-  const checkbox = document.querySelector('input[name="word_type[is_number_type]"]');
-  if (checkbox && checkbox.checked) {
-    toggleNumberFields(true);
+// More robust initialization that finds the actual checkbox (not the hidden field)
+function initializeForm() {
+  console.log('Initializing form...');
+  
+  // Find the actual checkbox input (not the hidden field Phoenix creates)
+  const checkbox = document.querySelector('input[name="word_type[is_number_type]"][type="checkbox"]');
+  
+  if (!checkbox) {
+    console.log('No checkbox found, trying again in 100ms...');
+    setTimeout(initializeForm, 100);
+    return;
   }
-});
+  
+  console.log('Found actual checkbox:', checkbox);
+  console.log('Checkbox checked property:', checkbox.checked);
+  console.log('Checkbox value:', checkbox.value);
+  console.log('Checkbox attributes:', Array.from(checkbox.attributes).map(attr => `${attr.name}="${attr.value}"`));
+  
+  const isChecked = checkbox.checked;
+  console.log('Final isChecked value:', isChecked);
+  
+  if (isChecked) {
+    console.log('Checkbox is checked, showing number fields');
+    toggleNumberFields(true);
+  } else {
+    console.log('Checkbox is not checked');
+  }
+}
+
+// Try multiple initialization methods
+document.addEventListener('DOMContentLoaded', initializeForm);
+window.addEventListener('load', initializeForm);
+
+// Also try with a small delay in case LiveView is still rendering
+setTimeout(initializeForm, 50);
 </script>

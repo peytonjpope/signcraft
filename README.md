@@ -3,9 +3,7 @@
 
 > *A resource for ASL learners to maintain vocabulary and practice grammar, with the intention of promoting Deaf community engagement*
 
-## v1.5.0
-
-### Features
+### v1.6.1
 - Filter words by category
 - Target a specific template or word
 - Prevented duplicate words types and structures
@@ -18,7 +16,7 @@
 
 SignCraft provides an easy-to-use approach to ASL vocab building and grammar practice:
 1. **Get Started** - With carefully selected pre-installed common words, tpyes, and templates
-2. **Create Word Types** - Set up categories (usually parts of speech like "noun") to organize vocab words
+2. **Create Word Types** - That categorize your words. This can include parts of speech (ex. 'subject') or number ranges (ex. '1-100')
 3. **Build Templates** - Design sentence structures following ASL grammar patterns. Example:
    - `topic + subject + verb` → "FOOD ME EAT"
 4. **Add Vocabulary** - Build your personal word bank over time, categorized by word type
@@ -79,7 +77,7 @@ fly deploy
 Created by **Peyton Pope** 
 
 - Portfolio: [peytonjpope.com](https://peytonjpope.com)
-- LinkedIn: [linkedin.com/in/peytonpope](https://linkedin.com/in/peytonpope)
+- LinkedIn: [linkedin.com/in/peyton-pope-75202b24a](https://www.linkedin.com/in/peyton-pope-75202b24a/)
 - GitHub: [github.com/peytonjpope](https://github.com/peytonjpope)
 
 ---
