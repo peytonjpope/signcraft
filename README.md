@@ -15,7 +15,7 @@
 ### User Experience
 
 SignCraft provides an easy-to-use approach to ASL vocab building and grammar practice:
-1. **Get Started** - With carefully selected pre-installed common words, tpyes, and templates
+1. **Get Started** - With carefully selected pre-installed common words, types, and templates
 2. **Create Word Types** - That categorize your words. This can include parts of speech (ex. 'subject') or number ranges (ex. '1-100')
 3. **Build Templates** - Design sentence structures following ASL grammar patterns. Example:
    - `topic + subject + verb` → "FOOD ME EAT"
